@@ -1,0 +1,1 @@
+A 100% Rust port of a vector field and point charge simulator which I previously made on Processing JS. Randomly creates several point charges of a random magnitude and polarity, then places some test charges randomly which go around in the vector fields in a cool-looking way. 
