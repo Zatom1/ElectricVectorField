@@ -17,9 +17,10 @@ fn initialize_charges() -> Vec<Vec<f32>> {
     INIT.call_once(|| {
         unsafe {
             point_charges_init = Some(vec![
+                /*(vec![(rand::random::<f32>() - 0.5)*500.0, (rand::random::<f32>()-0.5)*500.0, (rand::random::<f32>()-0.5)*5.0]), 
                 (vec![(rand::random::<f32>() - 0.5)*500.0, (rand::random::<f32>()-0.5)*500.0, (rand::random::<f32>()-0.5)*5.0]), 
-                (vec![(rand::random::<f32>() - 0.5)*500.0, (rand::random::<f32>()-0.5)*500.0, (rand::random::<f32>()-0.5)*5.0]), 
-                (vec![(rand::random::<f32>() - 0.5)*500.0, (rand::random::<f32>()-0.5)*500.0, (rand::random::<f32>()-0.5)*5.0])
+                (vec![(rand::random::<f32>() - 0.5)*500.0, (rand::random::<f32>()-0.5)*500.0, (rand::random::<f32>()-0.5)*5.0])*/
+                (vec![300.0 as f32, 300.0 as f32, 2.0 as f32])
                 ]
             );
         }
@@ -115,21 +116,32 @@ fn view(app: &App, frame: Frame) {
                 //     vec_y = signum(vec_y) * abs(y_cast - point_charges[biggest_influence][1]) * f32::sin((field_sim[4]/field_sim[3]).atan());
                 // }
 
-                if abs(vec_x) > abs(x_cast - point_charges[biggest_influence][0]) || abs(vec_y) > abs(y_cast - point_charges[biggest_influence][1]){
-                    let mut ratio: f32 = 0.0;
-                    if vec_x > vec_y {
-                        ratio = vec_x / (x_cast - point_charges[biggest_influence][0]);
-                    }
-                    else {
-                        ratio = vec_y / (y_cast - point_charges[biggest_influence][1]);
-                    }
 
-                    vec_x *= 1.0/ratio;
-                    vec_y *=  1.0/ratio;
-                }
                 // if abs(vec_y) > abs(y_cast - point_charges[biggest_influence][1]) {
                 //     vec_y = signum(vec_y) * abs(y_cast - point_charges[biggest_influence][1]);
                 // }
+                let mut resize_vector: Vec<f32> = field_sim;
+
+                while resize_vector.len() > 2 {
+                    resize_vector.pop();
+                }
+
+                if abs(vec_x) > abs(x_cast - point_charges[biggest_influence][0]) || abs(vec_y) > abs(y_cast - point_charges[biggest_influence][1]){
+                    let mut ratio: f32 = 0.0;
+                    if vec_x > vec_y {
+                        ratio =  (x_cast - point_charges[biggest_influence][0]) / abs(vec_x);
+                        //resize_vector.resize(new_len, value)
+                        vec_x *= ratio;
+                        vec_y *= ratio;
+                    }
+                    else {
+                        ratio = (y_cast - point_charges[biggest_influence][1]) / abs(vec_y);
+                        vec_x *= ratio;
+                        vec_y *= ratio;
+                    }
+
+                    
+                }
 
                 let x2 = x_cast + vec_x;
                 let y2 = y_cast + vec_y;
@@ -137,7 +149,25 @@ fn view(app: &App, frame: Frame) {
                 //let offset = 2;
 
                 let arrow_start = pt2(x_cast, y_cast);
-                let arrow_end: Vec2 = pt2(x2, y2);
+                let mut arrow_end: Vec2 = pt2(x2, y2);
+
+                // if abs(vec_x) > abs(x_cast - point_charges[biggest_influence][0]) || abs(vec_y) > abs(y_cast - point_charges[biggest_influence][1]){
+                //     let mut ratio: f32 = 0.0;
+                //     if vec_x > vec_y {
+                //         ratio =  (x_cast - point_charges[biggest_influence][0]) / vec_x;
+                //         arrow_end = pt2(point_charges[biggest_influence][0], (y_cast+vec_y)*ratio);
+                //     }
+                //     else {
+                //         ratio = (y_cast - point_charges[biggest_influence][1]) / vec_y;
+
+                //         arrow_end = pt2((x_cast+vec_x)*ratio, point_charges[biggest_influence][1] );
+
+                //     }
+
+                    
+                // }
+
+                
 
                 draw.arrow().start(arrow_start).end(arrow_end);
 
